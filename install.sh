@@ -1,11 +1,10 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
 
-# ===[ Color Codes ]===
-RED="\033[1;31m"
-GRN="\033[1;32m"
-CYN="\033[1;36m"
-YLW="\033[1;33m"
-NC="\033[0m"
+# Colors
+RED='\033[1;31m'
+GRN='\033[1;32m'
+CYN='\033[1;36m'
+NC='\033[0m'
 
 clear
 echo -e "${RED}
@@ -14,43 +13,44 @@ echo -e "${RED}
 █████╗  ██╔████╔██║██║   ██║██╔██╗ ██║
 ██╔══╝  ██║╚██╔╝██║██║   ██║██║╚██╗██║
 ███████╗██║ ╚═╝ ██║╚██████╔╝██║ ╚████║
-╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
-${GRN}[Welcome to Emon-Termux-HackerSetup]${NC}"
+╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ${GRN}[Welcome, Emon!]
+${NC}"
 
-# ===[ Step 1: Update & Upgrade ]===
-echo -e "${CYN}🔁 Updating your Termux...${NC}"
+echo -e "${CYN}🔁 Starting Emon-Termux-HackerSetup...${NC}"
+sleep 1
+
+# Update & Upgrade
+echo -e "${GRN}📦 Updating packages...${NC}"
 pkg update -y && pkg upgrade -y
 
-# ===[ Step 2: Required Packages ]===
-echo -e "${CYN}📦 Installing essential packages...${NC}"
-pkg install -y git curl wget neofetch figlet toilet ncurses-utils termux-api lolcat
+# Install essential packages
+echo -e "${GRN}📥 Installing essential packages...${NC}"
+pkg install -y python git curl wget neofetch termux-api figlet toilet tsu
 
-# ===[ Step 3: Setup Storage ]===
-termux-setup-storage
+# Download Welcome MP3
+echo -e "${GRN}🔊 Adding Welcome voice...${NC}"
+mkdir -p $HOME/.config/emon
+curl -L -o $HOME/.config/emon/sound.mp3 "https://github.com/Termux-Emon/Emon-Termux-HackerSetup/raw/main/Welcome%20to%20Emon-Termux%E2%80%91HackerSetup.mp3"
 
-# ===[ Step 4: Download Sound ]===
-echo -e "${CYN}🔊 Downloading hacker welcome voice...${NC}"
-mkdir -p $HOME/Emon-Termux-HackerSetup
-curl -L -o $HOME/Emon-Termux-HackerSetup/sound.mp3 https://github.com/Termux-Emon/Emon-Termux-HackerSetup/raw/main/sound.mp3
-
-# ===[ Step 5: Create Hacker Banner ]===
-echo -e "${CYN}🧾 Creating animated hacker banner...${NC}"
-cat > $HOME/.banner << 'EOF'
+# Create custom banner with autoplay sound
+echo -e "${GRN}🎨 Setting up hacker-style banner...${NC}"
+cat > $HOME/.config/emon/banner.sh << 'EOF'
+termux-media-player play $HOME/.config/emon/sound.mp3
 clear
-echo -e "\033[1;31m"
-figlet -f slant "Emon" | lolcat
-echo -e "\033[1;36mWelcome back, Commander...\033[0m"
-neofetch
-echo -e "\033[1;33mSystem is now ready. Execute your mission.\033[0m"
-termux-media-player play $HOME/Emon-Termux-HackerSetup/sound.mp3
+echo -e "\033[1;31m
+███████╗███╗   ███╗ ██████╗ ███╗   ██╗
+██╔════╝████╗ ████║██╔═══██╗████╗  ██║
+█████╗  ██╔████╔██║██║   ██║██╔██╗ ██║
+██╔══╝  ██║╚██╔╝██║██║   ██║██║╚██╗██║
+███████╗██║ ╚═╝ ██║╚██████╔╝██║ ╚████║
+╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ \033[1;32m[Welcome, Emon!]\033[0m"
+echo -e "\033[1;36m🧠 System Armed. Ready for command...\033[0m"
 EOF
 
-# ===[ Step 6: Add .banner to .bashrc ]===
-echo -e "${CYN}⚙️ Enabling banner + sound auto-load...${NC}"
-if ! grep -q ".banner" $HOME/.bashrc; then
-  echo "bash \$HOME/.banner" >> $HOME/.bashrc
+# Autoload banner on startup
+echo -e "${GRN}🛠️ Finalizing setup...${NC}"
+if ! grep -q "bash \$HOME/.config/emon/banner.sh" $HOME/.bashrc; then
+    echo "bash \$HOME/.config/emon/banner.sh" >> $HOME/.bashrc
 fi
 
-# ===[ Step 7: Completion ]===
-echo -e "${GRN}✅ Setup complete!"
-echo -e "${YLW}🔁 Restart Termux to see changes in action.${NC}"
+echo -e "${CYN}✅ Setup complete! Restart Termux to apply changes.${NC}"
